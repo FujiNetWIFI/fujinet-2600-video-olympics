@@ -1,0 +1,22 @@
+# Build output. Every image in here embeds the whole of Video Olympics, so this
+# has to stay out for the same reason rom/ does, quite apart from being generated.
+build/
+
+# THE CARTRIDGE ITSELF IS NOT IN THIS REPOSITORY.
+#
+# Video Olympics is Atari's, 1977, written by Joe Decuir. This project is a
+# patch and a server; it is not a place to redistribute the game. Supply your
+# own dump -- see rom/README.md for the file and the md5 the build checks
+# against. rom/video-olympics.asm is generated from that dump by
+# `make disasm` and is likewise not redistributed here.
+rom/*.bin
+rom/*.asm
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors and the usual detritus
+*.swp
+*~
+.DS_Store
