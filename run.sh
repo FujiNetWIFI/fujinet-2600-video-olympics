@@ -47,8 +47,17 @@ pkill -f "build/$ROM.bin" 2>/dev/null || true
 # charge the way the ROM expects: the game still runs, the gates that only
 # compare two builds against each other still pass, and nothing is measuring
 # what it claims to.
+#
+# -paddle_device goes with them, and MAME defaults it to `keyboard`, which
+# steps an analog paddle from the arrow keys and feels nothing like the knob.
+# `mouse` is what a paddle is. It matters only to a windowed run -- the
+# headless harnesses set the analog fields from Lua and never look at it -- but
+# it belongs here, because this is the one place the controller is described
+# and test/run_play.sh learned the hard way what happens when it is described
+# twice.
 args=(a2600 -window -skip_gameinfo -cartslot "${SLOT:-fujinet}"
       -joyport1 "${PORT1:-pad}" -joyport2 "${PORT2:-pad}"
+      -paddle_device "${PADDLE_DEVICE:-mouse}" -mouse
       -cart "$HERE/build/$ROM.bin"
       -snapshot_directory "$HERE/build/snap")
 
