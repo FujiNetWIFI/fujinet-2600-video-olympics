@@ -45,7 +45,7 @@ PY
 sleep 2
 grep -q "bind failed" build/rig/fn1.log && { echo "run_sess: BoIP port taken" >&2; exit 1; }
 
-setsid relay_server --host 127.0.0.1 --port "$RELAY_PORT" \
+setsid "${RELAY_SERVER[@]}" --host 127.0.0.1 --port "$RELAY_PORT" \
     < /dev/null > build/rig/relay.log 2>&1 &
 RELAY_PID=$!
 sleep 1

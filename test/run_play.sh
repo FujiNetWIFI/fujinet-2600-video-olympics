@@ -62,7 +62,7 @@ for n in 1 2; do
 done
 echo "== two fujinet-pc on :$BOIP1 and :$BOIP2 =="
 
-setsid relay_server --host 127.0.0.1 \
+setsid "${RELAY_SERVER[@]}" --host 127.0.0.1 \
     --port "$RELAY_PORT" --delay 2 --variation "${VARIATION:-2}" \
     < /dev/null > build/rig/playrelay.log 2>&1 &
 sleep 1
