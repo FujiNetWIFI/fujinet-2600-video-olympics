@@ -11,7 +11,8 @@ PORT          ?= 9600
 
 SRC := $(wildcard src/*.asm src/*.inc)
 
-.PHONY: all disasm verify-org probe echo vo frames det inputs lag sim lobby session rig rig-hold rig-play rig-repair ladder play stop clean
+.PHONY: all disasm verify-org probe echo vo frames det inputs lag sim lobby session rig rig-hold rig-play rig-repair ladder play stop clean \
+        relay-c relay-c-strict relay-c-asan server-diff
 
 all: verify-org
 
@@ -117,6 +118,25 @@ lag:
 # second through two emulators and two fujinet-pc instances.
 sim:
 	python3 tools/vo_client_sim.py
+
+# The C relay. server/vo_relay_server.py stays canonical; this binary is a
+# transliteration of it, and `make server-diff` is what keeps it honest. Every
+# gate that starts a relay takes SERVER=c to run this one instead:
+#
+#   make relay-c && SERVER=c make sim lobby rig
+#
+relay-c:
+	$(MAKE) -C server/c
+relay-c-strict:
+	$(MAKE) -C server/c strict
+relay-c-asan:
+	$(MAKE) -C server/c asan
+
+# The differential: both relays through identical scripted scenarios, with
+# every frame the clients receive and every line the servers log compared byte
+# for byte. A non-empty diff is a bug in the C port.
+server-diff: relay-c
+	python3 tools/server_diff.py
 
 # The Lobby registration contract, against a MOCK lobby on an ephemeral port.
 # Never the real one: this family has rewritten a machine-wide appkey by

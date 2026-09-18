@@ -18,6 +18,8 @@
 #     and `pkill -f "$RIG/fujinet"` then matches nothing. Every run leaked one,
 #     and the next run measured the leak. Launch by absolute path.
 
+. "$(dirname "$0")/serverlib.sh"
+
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HERE=$(pwd)
@@ -89,7 +91,7 @@ for n in 1 2; do
 done
 echo "== two fujinet-pc on :$BOIP1 and :$BOIP2 =="
 
-setsid python3 server/vo_relay_server.py --host 127.0.0.1 \
+setsid relay_server --host 127.0.0.1 \
     --port "$RELAY_PORT" --delay 2 --variation "${VARIATION:-2}" \
     < /dev/null > build/rig/relay.log 2>&1 &
 RELAY_PID=$!

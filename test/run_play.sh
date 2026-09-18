@@ -14,6 +14,8 @@
 # puts the two sides of a two-player variation. Whichever window has focus
 # takes the mouse and the keyboard.
 
+. "$(dirname "$0")/serverlib.sh"
+
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HERE=$(pwd)
@@ -60,7 +62,7 @@ for n in 1 2; do
 done
 echo "== two fujinet-pc on :$BOIP1 and :$BOIP2 =="
 
-setsid python3 server/vo_relay_server.py --host 127.0.0.1 \
+setsid relay_server --host 127.0.0.1 \
     --port "$RELAY_PORT" --delay 2 --variation "${VARIATION:-2}" \
     < /dev/null > build/rig/playrelay.log 2>&1 &
 sleep 1

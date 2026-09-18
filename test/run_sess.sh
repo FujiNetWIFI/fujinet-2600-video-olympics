@@ -4,6 +4,8 @@
 # A single-console version of the rig, for the half of the handshake that does
 # not need an opponent. The colour the boot bank paints IS its state, so
 # emu/sess.lua taps COLUBK and prints the sequence.
+. "$(dirname "$0")/serverlib.sh"
+
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HERE=$(pwd)
@@ -43,7 +45,7 @@ PY
 sleep 2
 grep -q "bind failed" build/rig/fn1.log && { echo "run_sess: BoIP port taken" >&2; exit 1; }
 
-setsid python3 server/vo_relay_server.py --host 127.0.0.1 --port "$RELAY_PORT" \
+setsid relay_server --host 127.0.0.1 --port "$RELAY_PORT" \
     < /dev/null > build/rig/relay.log 2>&1 &
 RELAY_PID=$!
 sleep 1

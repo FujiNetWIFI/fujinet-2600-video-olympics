@@ -24,6 +24,23 @@ T_BYE, T_PEER_LEFT, T_PING, T_PONG = 0x0A, 0x0B, 0x0C, 0x0D
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 fails = []
 
+def relay_argv():
+    """The relay to test: SERVER=py (default) or SERVER=c.
+
+    server/vo_relay_server.py stays the canonical reference implementation.
+    SERVER=c runs the C port in server/c/, which tools/server_diff.py holds to
+    byte-for-byte equality with it on the wire and in the log.
+    """
+    impl = os.environ.get("SERVER", "py")
+    if impl == "py":
+        return [sys.executable, os.path.join(HERE, "server/vo_relay_server.py")]
+    if impl == "c":
+        binary = os.path.join(HERE, "server/c/vo-relay")
+        if not os.access(binary, os.X_OK):
+            sys.exit("SERVER=c: %s is not built -- run `make -C server/c`" % binary)
+        return [binary]
+    sys.exit("SERVER must be 'py' or 'c' (got %r)" % impl)
+
 
 def check(cond, what):
     if cond:
@@ -105,8 +122,8 @@ def main():
     args = ap.parse_args()
 
     srv = subprocess.Popen(
-        [sys.executable, os.path.join(HERE, "server/vo_relay_server.py"),
-         "--host", "127.0.0.1", "--port", str(args.port),
+        relay_argv() +
+        ["--host", "127.0.0.1", "--port", str(args.port),
          "--delay", "2", "--variation", "12"],
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     try:
